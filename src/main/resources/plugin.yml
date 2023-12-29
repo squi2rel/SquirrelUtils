@@ -1,0 +1,10 @@
+name: SquirrelUtils
+version: 0.0.1
+main: com.github.squi2rel.mcutils.MyPlugin
+api-version: 1.20
+
+commands:
+  jb:
+    description: Give player a jb
+  img2map:
+    description: Convert image to map
