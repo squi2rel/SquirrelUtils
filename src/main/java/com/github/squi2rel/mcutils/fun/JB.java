@@ -1,8 +1,8 @@
 package com.github.squi2rel.mcutils.fun;
 
+import arc.Events;
 import com.github.squi2rel.mcutils.Vars;
 import com.github.squi2rel.mcutils.commands.BaseExecutor;
-import com.github.squi2rel.mcutils.events.Events;
 import com.github.squi2rel.mcutils.events.Trigger;
 import com.github.squi2rel.mcutils.utils.Func;
 import com.github.squi2rel.mcutils.utils.Position;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class JB extends BaseExecutor {
+public class JB extends BaseExecutor implements Listener {
     ArrayList<JBData> jbs = new ArrayList<>();
     public JB() {
         super("jb");
@@ -49,22 +49,13 @@ public class JB extends BaseExecutor {
                 }
             }
         }, 0L, 1L);
-        Events.on(Trigger.disable, () -> {
+        Events.run(Trigger.disable, () -> {
             for (JBData jb : jbs) {
                 jb.jb.remove();
             }
             jbs.clear();
         });
-        Bukkit.getServer().getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-                JBData d = Func.find(jbs, e -> e.jb == event.getEntity());
-                if (d != null) {
-                    d.player.damage(event.getDamage(), event.getDamager());
-                    event.setCancelled(true);
-                }
-            }
-        }, Vars.plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(this, Vars.plugin);
     }
 
     //code from Minecraft
@@ -90,6 +81,16 @@ public class JB extends BaseExecutor {
 
         }
         return bodyRot;
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) return;
+        JBData d = Func.find(jbs, e -> e.jb == event.getEntity());
+        if (d != null) {
+            d.player.damage(event.getDamage(), event.getDamager());
+            event.setCancelled(true);
+        }
     }
 
     @Override

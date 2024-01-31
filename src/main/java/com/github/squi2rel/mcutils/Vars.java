@@ -2,6 +2,9 @@ package com.github.squi2rel.mcutils;
 
 import com.github.squi2rel.mcutils.fun.ImageToMap;
 import com.github.squi2rel.mcutils.fun.JB;
+import com.github.squi2rel.mcutils.useful.DigLeader;
+import com.github.squi2rel.mcutils.useful.JS;
+import com.github.squi2rel.mcutils.useful.PearlLoadChunks;
 import com.github.squi2rel.mcutils.utils.Sync;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -15,6 +18,9 @@ public class Vars {
     public static void init() {
         new ImageToMap();
         new JB();
+        new JS();
+        new DigLeader();
+        new PearlLoadChunks();
 
         Sync.init();
 

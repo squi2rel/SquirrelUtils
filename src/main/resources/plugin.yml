@@ -8,3 +8,7 @@ commands:
     description: Give player a jb
   img2map:
     description: Convert image to map
+  js:
+    description: Run javascript
+  pearlload:
+    description: Toggle pearl load chunks

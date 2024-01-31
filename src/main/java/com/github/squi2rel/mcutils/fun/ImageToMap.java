@@ -1,7 +1,7 @@
 package com.github.squi2rel.mcutils.fun;
 
+import arc.util.Http;
 import com.github.squi2rel.mcutils.commands.BaseExecutor;
-import com.github.squi2rel.mcutils.utils.Http;
 import com.github.squi2rel.mcutils.utils.Sync;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
