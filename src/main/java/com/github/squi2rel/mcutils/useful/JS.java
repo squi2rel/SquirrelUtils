@@ -12,10 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.ImporterTopLevel;
-import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.*;
 
 import java.util.Objects;
 
@@ -39,7 +36,7 @@ public class JS extends BaseExecutor implements Listener {
     public String run(String text) {
         try {
             Object o = cx.evaluateString(scope, text, "js.js", 1, null);
-            return Context.toString(o);
+            return o instanceof NativeJavaObject n ? n.unwrap().toString() : Context.toString(o);
         } catch (Throwable t) {
             return getError(t);
         }
