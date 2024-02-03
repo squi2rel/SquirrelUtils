@@ -14,8 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
+import org.mozilla.javascript.ImporterTopLevel;
 import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.commonjs.module.RequireBuilder;
 
 import java.util.Objects;
 
@@ -28,8 +28,7 @@ public class JS extends BaseExecutor implements Listener {
         cx = new ContextFactory().enterContext();
         cx.setOptimizationLevel(9);
         cx.setLanguageVersion(Context.VERSION_ES6);
-        scope = cx.initStandardObjects();
-        new RequireBuilder().createRequire(cx, scope).install(scope);
+        scope = new ImporterTopLevel(cx);
         Bukkit.getPluginManager().registerEvents(this, Vars.plugin);
     }
 
