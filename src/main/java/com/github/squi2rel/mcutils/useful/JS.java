@@ -12,20 +12,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import rhino.*;
-import rhino.module.RequireBuilder;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
+import org.mozilla.javascript.Scriptable;
 
 import java.util.Objects;
 
 public class JS extends BaseExecutor implements Listener {
-    public final Context context;
+    public final Context cx;
     public final Scriptable scope;
 
     public JS() {
         super("js");
-        context = getScriptContext();
-        scope = new ImporterTopLevel(context);
-        new RequireBuilder().setSandboxed(true).createRequire(context, scope).install(scope);
+        cx = new ContextFactory().enterContext();
+        cx.setOptimizationLevel(9);
+        cx.setLanguageVersion(Context.VERSION_ES6);
+        scope = cx.initStandardObjects();
         Bukkit.getPluginManager().registerEvents(this, Vars.plugin);
     }
 
@@ -33,24 +35,13 @@ public class JS extends BaseExecutor implements Listener {
         return t.getClass().getSimpleName() + (t.getMessage() == null ? "" : ": " + t.getMessage());
     }
 
-    public String runConsole(String text) {
-        try{
-            Object o = context.evaluateString(scope, text, "console.js", 1);
-            if (o instanceof NativeJavaObject n) o = n.unwrap();
-            if (o == null) o = "null";
-            else if (o instanceof Undefined) o = "undefined";
-            var out = o.toString();
-            return out == null ? "null" : out;
+    public String run(String text) {
+        try {
+            Object o = cx.evaluateString(scope, text, "js.js", 1, null);
+            return Context.toString(o);
         } catch (Throwable t) {
             return getError(t);
         }
-    }
-
-    private Context getScriptContext(){
-        Context context = Context.getCurrentContext();
-        if(context == null) context = Context.enter();
-        context.setOptimizationLevel(9);
-        return context;
     }
 
     @Override
@@ -68,19 +59,20 @@ public class JS extends BaseExecutor implements Listener {
                 sb.append(s).append(" ");
             }
             sb.deleteCharAt(sb.length() - 1);
-            sender.sendMessage(runConsole(sb.toString()));
+            sender.sendMessage(run(sb.toString()));
         }
         return true;
     }
 
     @EventHandler
     public void onPlayerEditBook(PlayerEditBookEvent e) {
-        if (e.getNewBookMeta().getDisplayName().equals("RUNJS")) {
+        if (e.getPlayer().hasPermission("squirrel.admin.runjs") && e.getNewBookMeta().getDisplayName().equals("RUNJS")) {
             StringBuilder sb = new StringBuilder();
             for (String s : e.getNewBookMeta().getPages()) {
                 sb.append(s);
             }
-            e.getPlayer().sendMessage(runConsole(sb.toString()));
+            e.getPlayer().sendMessage(run(sb.toString()));
         }
     }
 }
+

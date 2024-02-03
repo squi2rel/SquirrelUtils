@@ -17,12 +17,14 @@ public class MyPlugin extends JavaPlugin {
     public void onLoad() {
         super.onLoad();
         Events.fire(Trigger.load);
+        saveDefaultConfig();
     }
 
     @Override
     public void onEnable() {
         plugin = this;
         getLogger().info("onEnable is called!");
+        Vars.config = getConfig();
         init();
         Events.fire(Trigger.enable);
     }
@@ -30,6 +32,7 @@ public class MyPlugin extends JavaPlugin {
     public void onDisable() {
         getLogger().info("onDisable is called!");
         Events.fire(Trigger.disable);
+        saveConfig();
     }
 
     @Override

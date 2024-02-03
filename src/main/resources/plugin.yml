@@ -12,3 +12,5 @@ commands:
     description: Run javascript
   pearlload:
     description: Toggle pearl load chunks
+  fixchat:
+    description: Toggle chat fixer for MCDR

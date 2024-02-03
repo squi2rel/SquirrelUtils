@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class DigLeader implements Listener {
     public Object2IntLinkedOpenHashMap<UUID> map = new Object2IntLinkedOpenHashMap<>();
-    private Objective dugList = null;
+    private Objective digList = null;
     public DigLeader() {
         Fi stats = new Fi(Objects.requireNonNull(Bukkit.getServer().getWorld("world")).getWorldFolder()).child("stats");
         if (stats.exists()) stats.walk(f -> {
@@ -39,9 +39,9 @@ public class DigLeader implements Listener {
     public void loadToScoreBoard() {
         Sync.post(() -> {
             var sc = Objects.requireNonNull(Bukkit.getServer().getScoreboardManager()).getMainScoreboard();
-            dugList = sc.getObjective("dug");
-            if (dugList != null) dugList = sc.registerNewObjective("dug", Criteria.DUMMY, "挖掘榜");
-            map.forEach((uuid, dug) -> dugList.getScore(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName())).setScore(dug));
+            digList = sc.getObjective("dug");
+            if (digList == null) digList = sc.registerNewObjective("dug", Criteria.DUMMY, "挖掘榜");
+            map.forEach((uuid, dug) -> digList.getScore(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName())).setScore(dug));
         });
     }
 
@@ -50,7 +50,7 @@ public class DigLeader implements Listener {
         if (e.isCancelled()) return;
         var p = e.getPlayer();
         if (p.getGameMode() == GameMode.CREATIVE) return;
-        var s = dugList.getScore(p.getName());
+        var s = digList.getScore(p.getName());
         s.setScore(map.addTo(p.getUniqueId(), 1));
     }
 }
